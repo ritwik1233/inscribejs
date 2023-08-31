@@ -1,0 +1,201 @@
+.span-decorator-bold {
+    font-weight: bold;
+}
+
+.span-decorator-italic {
+    font-style: italic;
+}
+
+.span-decorator-underline {
+    text-decoration: underline;
+}
+
+.editor-container {
+    width: 100%;
+    height: 100%;
+}
+
+.editor-item-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.editor-item {
+    display: flex;
+    align-items: center;
+}
+
+.editor-item-editable-text {
+    flex: 1;
+    cursor: text;
+    width: 100%;
+    border-radius: 0px;
+    line-height: 2.0;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    padding: 8px;
+    /* Adjust as needed */
+    border-radius: 50%;
+    /* Circular button */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    outline: none;
+    /* Remove the default focus outline */
+    position: relative;
+    /* Relative positioning for ripple effect */
+    overflow: hidden;
+    /* For ripple effect */
+}
+
+.icon-button i {
+    font-size: 24px;
+    /* Adjust the icon size as needed */
+    color: #333;
+    /* Icon color */
+}
+
+.icon-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.icon-button:active {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.textformat-button-group {
+    display: flex;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    /* to ensure that inner button borders are contained */
+}
+
+.textformat-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    background-color: #fff;
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    /* gives a divider effect between buttons */
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.textformat-btn:last-child {
+    border-right: none;
+    /* remove right border for the last button */
+}
+
+.textformat-btn:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.popover-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+
+.component-popover {
+    position: absolute;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+    z-index: 1000;
+    transform-origin: right center;
+    /* Adjust as needed */
+}
+
+.popover-content {
+    position: absolute;
+    z-index: 1001;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-100%);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ComponentList.css */
+
+.component-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border: 1px solid #e0e0e0;
+    margin: 5px 0;
+    padding: 10px;
+    transition: background-color 0.3s;
+}
+
+.list-item:hover {
+    background-color: #f5f5f5;
+}
+
+.list-icon {
+    display: inline-block;
+    width: 24px;
+    /* Adjust as needed */
+    height: 24px;
+    /* Adjust as needed */
+    margin-right: 10px;
+}
+
+.list-text {
+    flex: 1;
+}
+
+.tooltip-container {
+    position: relative;
+}
+
+.tooltip-content {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.tooltip-content::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
