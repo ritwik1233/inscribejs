@@ -46,8 +46,8 @@ export interface LineItemProps {
 export interface EditorProps {
     lines: LineItemProps[];
     setLines: React.Dispatch<React.SetStateAction<LineItemProps[]>>;
-    textFormats: TextItem[];
-    components: ComponentProps[];
+    textFormats?: TextItem[];
+    components?: ComponentProps[];
 }
 export interface CustomComponentProps {
     component: ComponentProps | undefined;

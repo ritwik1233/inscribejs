@@ -32,6 +32,7 @@ const Editor: React.FC<EditorProps> = (props) => {
   const [insertComponentToolBar, setInsertComponentToolBar] = useState(null);
   const [toolBarItem, setToolBarItem] = useState({});
   const rangeArray = useRef<any>([]);
+  const controlA = useRef(false);
   useEffect(() => {
     const handleSelectionChange = () => {
       const selection: any = window.getSelection();
@@ -102,41 +103,50 @@ const Editor: React.FC<EditorProps> = (props) => {
                   )[1] || ""
                 );
               }
-              const selectedLines = lines.filter((l: any) => {
+              const selectedLines = lines.filter((l: LineItemProps) => {
                 return l.order >= startOrder && l.order <= endOrder;
               });
-              const newRangeArray = selectedLines.map((line: any) => {
-                if (line.order === startOrder) {
-                  const ec = getLastTextNode(startParent);
-                  const textContent = ec.textContent;
-                  const newRange = createTextSelectionRange(
-                    startNode,
-                    startOffset,
-                    ec,
-                    textContent.length
-                  );
-                  return newRange;
-                } else if (line.order === endOrder) {
-                  const sc = getFirstTextNode(endParent);
-                  const newRange = createTextSelectionRange(
-                    sc,
-                    0,
-                    endNode,
-                    endOffset
-                  );
-                  return newRange;
+              const newRangeArray = selectedLines.map((line: LineItemProps) => {
+                if (line.type === "text") {
+                  if (line.order === startOrder) {
+                    const ec = getLastTextNode(startParent);
+                    const textContent = ec.textContent;
+                    const newRange = createTextSelectionRange(
+                      startNode,
+                      startOffset,
+                      ec,
+                      textContent.length
+                    );
+                    return newRange;
+                  } else if (line.order === endOrder) {
+                    const sc = getFirstTextNode(endParent);
+                    const newRange = createTextSelectionRange(
+                      sc,
+                      0,
+                      endNode,
+                      endOffset
+                    );
+                    return newRange;
+                  } else {
+                    const elem = document.getElementById(
+                      `lineItem-${line._id}`
+                    );
+                    const sc = getFirstTextNode(elem);
+                    const ec = getLastTextNode(elem);
+                    const textContent = ec.textContent;
+                    const newRange = createTextSelectionRange(
+                      sc,
+                      0,
+                      ec,
+                      textContent.length
+                    );
+                    return newRange;
+                  }
                 } else {
-                  const elem = document.getElementById(`lineItem-${line._id}`);
-                  const sc = getFirstTextNode(elem);
-                  const ec = getLastTextNode(elem);
-                  const textContent = ec.textContent;
-                  const newRange = createTextSelectionRange(
-                    sc,
-                    0,
-                    ec,
-                    textContent.length
-                  );
-                  return newRange;
+                  return {
+                    collapsed: true,
+                    _id: line._id,
+                  };
                 }
               });
               rangeArray.current = newRangeArray;
@@ -152,11 +162,217 @@ const Editor: React.FC<EditorProps> = (props) => {
         mousePositionRef.current = { x: mouseX, y: mouseY };
       }
     };
+    const onKeyDown = (e: any) => {
+      if (e.key === "Control") {
+        controlA.current = true;
+      } else {
+        if (e.key === "a" && controlA.current) {
+          e.preventDefault();
+          e.stopPropagation();
+          let firstLine = null;
+          let lastLine = null;
+          let i = 0;
+          while (!firstLine && i < lines.length) {
+            if (lines[i].type === "text") {
+              firstLine = lines[i];
+            }
+            i++;
+            break;
+          }
+          i = lines.length - 1;
+          while (!lastLine && i >= 0) {
+            if (lines[i].type === "text") {
+              lastLine = lines[i];
+            }
+            i--;
+            break;
+          }
+          let newRange: any = null;
+          if (firstLine && lastLine) {
+            const firstParentElem = document.getElementById(
+              `lineItem-${firstLine._id}`
+            );
+            const firstTextNode = getFirstTextNode(firstParentElem);
+            const lastParentElem = document.getElementById(
+              `lineItem-${lastLine._id}`
+            );
+            const lastTextNode = getLastTextNode(lastParentElem);
+            newRange = createTextSelectionRange(
+              firstTextNode,
+              0,
+              lastTextNode,
+              lastTextNode.textContent.length
+            );
+          }
+          const selection = window.getSelection();
+          selection?.removeAllRanges();
+          setTimeout(() => {
+            rangeArray.current = lines.map((line: LineItemProps) => {
+              if (line.type === "text") {
+                const elem = document.getElementById(`lineItem-${line._id}`);
+                const sc = getFirstTextNode(elem);
+                const ec = getLastTextNode(elem);
+                const textContent = ec.textContent;
+                const newRange = createTextSelectionRange(
+                  sc,
+                  0,
+                  ec,
+                  textContent.length
+                );
+                return newRange;
+              } else {
+                return {
+                  collapsed: true,
+                  _id: line._id,
+                };
+              }
+            });
+            if (newRange) {
+              selection?.addRange(newRange);
+              console.log(newRange, "---", rangeArray.current);
+            }
+          }, 100);
+        } else if (
+          e.key === "x" &&
+          controlA.current &&
+          rangeArray.current.length > 0
+        ) {
+          const linesToCut = rangeArray.current.map((range: any) => {
+            if (range.collapsed) {
+              return range._id;
+            } else {
+              const startContainer = range.startContainer;
+              const parentItem = getParentLineItem(startContainer);
+              return parentItem?.id.split("-")[1];
+            }
+          });
+          let combinedHTML = rangeArray.current
+            .map((range: any) => {
+              if (range.collapsed) {
+                const elem = document.getElementById(
+                  `custom-component-${range._id}`
+                );
+                return elem?.outerHTML;
+              } else {
+                const startContainer = range.startContainer;
+                const parentItem = getParentLineItem(startContainer);
+                return parentItem.outerHTML;
+              }
+            })
+            .join("");
+          navigator.clipboard
+            .write([
+              new ClipboardItem({
+                "text/plain": new Blob([combinedHTML], { type: "text/plain" }),
+                "text/html": new Blob([combinedHTML], { type: "text/html" }),
+              }),
+            ])
+            .then(function () {
+              console.log("Combined HTML copied to clipboard");
+            })
+            .catch(function (err) {
+              console.error("Could not copy combined HTML: ", err);
+            });
 
+          setLines((prev: LineItemProps[]) => {
+            if (linesToCut.length > 0) {
+              let newLines = lines.filter((line: LineItemProps) => {
+                return !linesToCut.includes(line._id);
+              });
+              newLines = newLines.map((line: LineItemProps, index: number) => {
+                return {
+                  ...line,
+                  order: index,
+                };
+              });
+              return [...newLines];
+            }
+            return prev;
+          });
+          rangeArray.current = [];
+        } else if (
+          e.key === "c" &&
+          controlA.current &&
+          rangeArray.current.length > 0
+        ) {
+          let combinedHTML = rangeArray.current
+            .map((range: any) => {
+              if (range.collapsed) {
+                const elem = document.getElementById(
+                  `custom-component-${range._id}`
+                );
+                return elem?.outerHTML;
+              } else {
+                const startContainer = range.startContainer;
+                const parentItem = getParentLineItem(startContainer);
+                return parentItem.outerHTML;
+              }
+            })
+            .join("");
+          navigator.clipboard
+            .write([
+              new ClipboardItem({
+                "text/plain": new Blob([combinedHTML], { type: "text/plain" }),
+                "text/html": new Blob([combinedHTML], { type: "text/html" }),
+              }),
+            ])
+            .then(function () {
+              console.log("Combined HTML copied to clipboard");
+            })
+            .catch(function (err) {
+              console.error("Could not copy combined HTML: ", err);
+            });
+        } else if (
+          e.key === "v" &&
+          controlA.current &&
+          rangeArray.current.length > 0
+        ) {
+          console.log("paste");
+        } else if (
+          e.key === "Backspace" ||
+          (e.key === "Delete" && rangeArray.current.length > 0)
+        ) {
+          const linesToRemove = rangeArray.current.map((range: any) => {
+            if (range.collapsed) {
+              return range._id;
+            } else {
+              const startContainer = range.startContainer;
+              const parentItem = getParentLineItem(startContainer);
+              return parentItem?.id.split("-")[1];
+            }
+          });
+          setLines((prev: LineItemProps[]) => {
+            if (linesToRemove.length > 0) {
+              let newLines = lines.filter((line: LineItemProps) => {
+                return !linesToRemove.includes(line._id);
+              });
+              newLines = newLines.map((line: LineItemProps, index: number) => {
+                return {
+                  ...line,
+                  order: index,
+                };
+              });
+              return [...newLines];
+            }
+            return prev;
+          });
+          rangeArray.current = [];
+        }
+      }
+    };
+    const onKeyUp = (e: any) => {
+      if (e.key === "Control") {
+        controlA.current = false;
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keyup", onKeyUp);
     document.addEventListener("selectionchange", handleSelectionChange);
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("mousemove", onMouseMove);
     return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keyup", onKeyUp);
       document.removeEventListener("selectionchange", handleSelectionChange);
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
@@ -380,7 +596,7 @@ const Editor: React.FC<EditorProps> = (props) => {
           setInsertComponentToolBar(null);
           setToolBarItem({});
         }}
-        components={components}
+        components={components || []}
         onSelectFormat={onSelectFormat}
         toolBarItem={toolBarItem}
       />
@@ -390,7 +606,7 @@ const Editor: React.FC<EditorProps> = (props) => {
           top: tooltipPosition.y,
           left: tooltipPosition.x,
         }}
-        textFormats={textFormats}
+        textFormats={textFormats || []}
         onAddFormat={onAddFormat}
         onClose={(e: any) => {
           e.preventDefault();
@@ -411,8 +627,8 @@ const Editor: React.FC<EditorProps> = (props) => {
             <LineItem
               key={line._id}
               line={line}
-              textFormats={textFormats}
-              components={components}
+              textFormats={textFormats || []}
+              components={components || []}
               isMouseClicked={isMouseClicked}
               onOpenComponentToolbar={(e: any) => {
                 setInsertComponentToolBar(e.currentTarget);

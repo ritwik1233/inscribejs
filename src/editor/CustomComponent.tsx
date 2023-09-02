@@ -51,6 +51,7 @@ const CustomComponent: React.FC<CustomComponentProps> = (props) => {
     >
       <div
         style={containerStyle}
+        id={`custom-component-${line._id}`}
         onClick={(e) => {
           onToggleEdit(line.order);
         }}

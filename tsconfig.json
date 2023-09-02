@@ -5,11 +5,12 @@
     "jsx": "react",
     "declaration": true,
     "outDir": "./lib",
-    "rootDir": "./src",      
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node"
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "examples"]
 }
