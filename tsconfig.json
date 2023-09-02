@@ -12,5 +12,5 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node"
   },
-  "exclude": ["node_modules", "examples"]
+  "include": ["src",],
 }
