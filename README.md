@@ -5,8 +5,6 @@ Inscribe is a powerful, customizable React-based rich text editor that allows de
 ## Features
 
 - **Custom Components**: Embed your own React components inside the editor.
-- **ClickAwayListener**: Detect click events outside of specific components.
-- **Popover**: Easily display popover components with controlled positions.
 - **Event Handlers**: Attach custom event handlers to text items, components, and more.
 - **Line Item Management**: Control and manage individual lines in the editor.
 
