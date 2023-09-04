@@ -2,7 +2,8 @@
 
 Inscribe is a powerful, customizable React-based rich text editor that allows developers to seamlessly integrate their own components. Whether you're building a blog platform, a CMS, or any application that requires text editing with a touch of personalization, inscribe has got you covered.
 
-https://www.npmjs.com/package/inscribe-js
+* [Visit NPM](https://www.npmjs.com/package/inscribe-js)
+* [Demo link](https://candid-sundae-ff0c1c.netlify.app)
 
 ## Features
 
