@@ -11,7 +11,7 @@ Inscribe is a powerful, customizable React-based rich text editor that allows de
 ## Installation
 
 ```bash
-npm install inscribe-js
+npm i inscribe-js
 ```
 
 ## API & Type Definitions
