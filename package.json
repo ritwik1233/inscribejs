@@ -1,6 +1,6 @@
 {
   "name": "@ritwik1233/inscribe-js",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Text Editor library",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
