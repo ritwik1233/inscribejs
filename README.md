@@ -152,7 +152,7 @@ click-handler {
 
 ### Editor with Custom Component
 
-Below examples demonstrates how you can intergrate a simple image component in the editor
+Below examples demonstrates how you can intergrate a simple video component in the editor
 
 #### App.js
 ```
