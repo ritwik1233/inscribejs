@@ -15,7 +15,10 @@ const PositionPopover: React.FC<PopoverProps> = ({
   };
 
   return (
-    <div className="popover-overlay" onClick={onClose}>
+    <div
+      className="popover-overlay"
+      onClick={onClose}
+    >
       <div className="popover-content" style={style}>
         {children}
       </div>

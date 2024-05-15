@@ -4,6 +4,7 @@ import { ClickAwayListenerProps } from "../types";
 const CustomClickAwayListener: React.FC<ClickAwayListenerProps> = ({
   onClickAway,
   children,
+  id,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -23,7 +24,7 @@ const CustomClickAwayListener: React.FC<ClickAwayListenerProps> = ({
     };
   }, [onClickAway]);
 
-  return <div ref={containerRef}>{children}</div>;
+  return <div id={id} ref={containerRef}>{children}</div>;
 };
 
 export default CustomClickAwayListener;

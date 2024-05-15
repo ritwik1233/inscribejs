@@ -39,7 +39,7 @@ const MyHandle = React.forwardRef((props, ref) => {
     </div>
   );
 });
-const Image: React.FC<ImageProps> = (props) => {
+const ImageComponent: React.FC<ImageProps> = (props) => {
   const { imageUrl = "", width, height, onChange, onChangeResize } = props;
   const onResizeEnd = (e: any, data: any) => {
     const { size } = data;
@@ -89,4 +89,4 @@ const Image: React.FC<ImageProps> = (props) => {
   );
 };
 
-export default Image;
+export default ImageComponent;

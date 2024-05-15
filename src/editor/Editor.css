@@ -41,7 +41,7 @@
 .icon-button {
     background: none;
     border: none;
-    padding: 8px;
+    padding: 2px;
     /* Adjust as needed */
     border-radius: 50%;
     /* Circular button */
@@ -82,7 +82,6 @@
     padding: 6px 12px;
     border: none;
     cursor: pointer;
-    background-color: #fff;
     border-right: 1px solid rgba(0, 0, 0, 0.12);
     /* gives a divider effect between buttons */
     font-size: 16px;
@@ -92,10 +91,6 @@
 .textformat-btn:last-child {
     border-right: none;
     /* remove right border for the last button */
-}
-
-.textformat-btn:hover {
-    background-color: rgba(0, 0, 0, 0.08);
 }
 
 .popover-overlay {
@@ -109,9 +104,7 @@
 
 .component-popover {
     position: absolute;
-    background-color: #ffffff;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e0e0e0;
     z-index: 1000;
     transform-origin: right center;
     /* Adjust as needed */
@@ -120,9 +113,6 @@
 .popover-content {
     position: absolute;
     z-index: 1001;
-    background: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transform: translateY(-100%);
     animation: fadeIn 0.3s ease-in-out;
 }

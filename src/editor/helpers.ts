@@ -28,14 +28,18 @@ export function createTextSelectionRange(
 
 export const getFirstTextNode = (elem: any) => {
   let firstChild = elem;
-  while (firstChild.nodeType !== 3) firstChild = firstChild.firstChild;
+  while (firstChild?.nodeType !== 3 && firstChild) {
+    firstChild = firstChild.firstChild;
+  }
 
   return firstChild;
 };
 
 export const getLastTextNode = (elem: any) => {
   let lastChild = elem;
-  while (lastChild.nodeType !== 3) lastChild = lastChild.lastChild;
+  while (lastChild?.nodeType !== 3 && lastChild) {
+    lastChild = lastChild?.lastChild;
+  }
 
   return lastChild;
 };

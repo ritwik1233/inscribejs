@@ -3,14 +3,27 @@ import { TextFormatToolBarProps, TextItem } from "../types";
 import PositionPopover from "./PositionPopover";
 
 const TextFormatToolBar: React.FC<TextFormatToolBarProps> = (props) => {
-  const { open, anchorPosition, textFormats, onAddFormat, onClose } = props;
+  const {
+    open,
+    anchorPosition,
+    textFormatToolBarStyle,
+    textFormatToolBarClassName = "",
+    textFormats,
+    onAddFormat,
+    onClose,
+  } = props;
   return (
     <PositionPopover
       open={open}
       anchorPosition={anchorPosition}
       onClose={onClose}
     >
-      <div className="textformat-button-group">
+      <div
+        className={textFormatToolBarClassName || "textformat-button-group"}
+        style={{
+          ...textFormatToolBarStyle,
+        }}
+      >
         <button
           className="textformat-btn"
           onClick={(e: any) => {

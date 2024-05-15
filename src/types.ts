@@ -6,6 +6,7 @@ export type ClickHanderType = {
 export interface ClickAwayListenerProps {
     onClickAway: (event: Event) => void;
     children: ReactNode;
+    id: string;
 }
 
 export interface PopoverProps {
@@ -47,7 +48,17 @@ export interface EditorProps {
     lines: LineItemProps[];
     setLines: React.Dispatch<React.SetStateAction<LineItemProps[]>>;
     textFormats?: TextItem[];
+    lineItemIconStyle?: React.CSSProperties;
+    containerStyle?: React.CSSProperties;
+    containerClassName?: string;
+    lineItemIcon?: React.ReactNode;
+    lineItemClassName?: string;
+    lineItemStyle?: React.CSSProperties;
     components?: ComponentProps[];
+    textFormatToolBarStyle?: React.CSSProperties;
+    componentPopoverStyle?: React.CSSProperties;
+    textFormatToolBarClassName?: string;
+    componentPopoverClassName?: string;
 }
 export interface CustomComponentProps {
     component: ComponentProps | undefined;
@@ -61,12 +72,15 @@ export interface TextFormatToolBarProps {
         top: number;
         left: number;
     };
+    textFormatToolBarStyle?: React.CSSProperties;
+    textFormatToolBarClassName?: string;
     textFormats: TextItem[];
     onAddFormat: (className: string, onClickHandlerObj?: ClickHanderType) => void;
     onClose: (e: any) => void;
 }
 export interface ComponentPopoverProps {
     isOpen: boolean;
+    componentPopoverStyle?: React.CSSProperties;
     anchorEl: HTMLElement | null;
     onClose: () => void;
     components: ComponentProps[];
@@ -75,9 +89,14 @@ export interface ComponentPopoverProps {
 }
 export interface LineItemComponentProps {
     line: LineItemProps;
+    lineItemIconStyle?: React.CSSProperties;
+    lineItemIcon? : React.ReactNode;
     isMouseClicked: boolean;
     components: ComponentProps[];
     textFormats: TextItem[];
+    lineItemClassName?: string;
+    onMoveItem: (draggedIndex: number, droppedIndex: number) => void;
+    lineItemStyle?: React.CSSProperties;
     onTextUpdateEnter: (text: string, order?: number) => void;
     onTextUpdate: (text: string, order?: number) => void;
     onFocusUp?: (text: string, _id: number) => void;

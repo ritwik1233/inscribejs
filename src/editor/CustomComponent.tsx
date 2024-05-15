@@ -39,12 +39,13 @@ const CustomComponent: React.FC<CustomComponentProps> = (props) => {
     return null;
   }, [line, component]);
   const containerStyle = {
-    width: "100%",
+    width: "inherit",
     opacity: line.isEditing ? 0.5 : 1,
     backgroundColor: line.isEditing ? "rgba(35,131,226,.28)" : "transparent",
   };
   return (
     <CustomClickAwayListener
+      id={`clickaway-${line._id}`}
       onClickAway={() => {
         onToggleEdit(line.order, false);
       }}

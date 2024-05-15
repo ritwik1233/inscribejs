@@ -15,6 +15,16 @@
     color: red;
   }
   
+  .heading-1 {
+    font-size: 32px;
+  }
+  .heading-2 {
+    font-size: 24px;
+  }
+  .heading-3 {
+    font-size: 18.72px;
+  }
+
   .click-handler {
     color: #61dafb;
     cursor: pointer !important;

@@ -19,10 +19,27 @@ import {
   LineItemProps,
 } from "../types";
 import ComponentPopover from "./ComponentPopover";
+
 import "./Editor.css";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const Editor: React.FC<EditorProps> = (props) => {
-  const { lines, setLines, textFormats, components } = props;
+  const {
+    lines,
+    setLines,
+    lineItemIcon,
+    textFormatToolBarClassName,
+    textFormats,
+    containerClassName,
+    containerStyle,
+    lineItemClassName,
+    lineItemStyle,
+    components = [],
+    textFormatToolBarStyle = {},
+    componentPopoverStyle = {},
+    lineItemIconStyle = {},
+  } = props;
 
   const [isMouseClicked, setIsMouseClicked] = useState(false);
   const isMouseClickedRef = useRef(false);
@@ -163,7 +180,7 @@ const Editor: React.FC<EditorProps> = (props) => {
       }
     };
     const onKeyDown = (e: any) => {
-      if (e.key === "Control") {
+      if (e.key === "Control" || e.key === "Meta") {
         controlA.current = true;
       } else {
         if (e.key === "a" && controlA.current) {
@@ -197,12 +214,14 @@ const Editor: React.FC<EditorProps> = (props) => {
               `lineItem-${lastLine._id}`
             );
             const lastTextNode = getLastTextNode(lastParentElem);
-            newRange = createTextSelectionRange(
-              firstTextNode,
-              0,
-              lastTextNode,
-              lastTextNode.textContent.length
-            );
+            if (firstTextNode && lastTextNode) {
+              newRange = createTextSelectionRange(
+                firstTextNode,
+                0,
+                lastTextNode,
+                lastTextNode?.textContent?.length
+              );
+            }
           }
           const selection = window.getSelection();
           selection?.removeAllRanges();
@@ -212,6 +231,12 @@ const Editor: React.FC<EditorProps> = (props) => {
                 const elem = document.getElementById(`lineItem-${line._id}`);
                 const sc = getFirstTextNode(elem);
                 const ec = getLastTextNode(elem);
+                if (!sc && !ec) {
+                  return {
+                    collapsed: true,
+                    _id: line._id,
+                  };
+                }
                 const textContent = ec.textContent;
                 const newRange = createTextSelectionRange(
                   sc,
@@ -229,7 +254,6 @@ const Editor: React.FC<EditorProps> = (props) => {
             });
             if (newRange) {
               selection?.addRange(newRange);
-              console.log(newRange, "---", rangeArray.current);
             }
           }, 100);
         } else if (
@@ -361,7 +385,7 @@ const Editor: React.FC<EditorProps> = (props) => {
       }
     };
     const onKeyUp = (e: any) => {
-      if (e.key === "Control") {
+      if (e.key === "Control" || e.key === "Meta") {
         controlA.current = false;
       }
     };
@@ -588,10 +612,14 @@ const Editor: React.FC<EditorProps> = (props) => {
     });
   };
   return (
-    <div className="editor-container">
+    <div
+      className={containerClassName ? containerClassName : `editor-container`}
+      style={containerStyle || {}}
+    >
       <ComponentPopover
         isOpen={!!insertComponentToolBar}
         anchorEl={insertComponentToolBar}
+        componentPopoverStyle={componentPopoverStyle}
         onClose={() => {
           setInsertComponentToolBar(null);
           setToolBarItem({});
@@ -602,6 +630,8 @@ const Editor: React.FC<EditorProps> = (props) => {
       />
       <TextFormatToolBar
         open={showTooltip}
+        textFormatToolBarStyle={textFormatToolBarStyle}
+        textFormatToolBarClassName={textFormatToolBarClassName}
         anchorPosition={{
           top: tooltipPosition.y,
           left: tooltipPosition.x,
@@ -622,29 +652,52 @@ const Editor: React.FC<EditorProps> = (props) => {
         }}
       />
       <div className="editor-item-container">
-        {lines.map((line: any) => {
-          return (
-            <LineItem
-              key={line._id}
-              line={line}
-              textFormats={textFormats || []}
-              components={components || []}
-              isMouseClicked={isMouseClicked}
-              onOpenComponentToolbar={(e: any) => {
-                setInsertComponentToolBar(e.currentTarget);
-                setToolBarItem(line);
-              }}
-              onTextUpdateEnter={onTextUpdateEnter}
-              onTextUpdate={onTextUpdate}
-              onFocusUp={onFocusUp}
-              onFocusDown={onFocusDown}
-              onRemoveLine={onRemoveLine}
-              onToggleEdit={onToggleEdit}
-            />
-          );
-        })}
+        <DndProvider backend={HTML5Backend}>
+          {lines.map((line: any) => {
+            return (
+              <LineItem
+                key={line._id}
+                line={line}
+                lineItemIcon={lineItemIcon}
+                lineItemClassName={lineItemClassName}
+                lineItemStyle={lineItemStyle}
+                lineItemIconStyle={lineItemIconStyle}
+                textFormats={textFormats || []}
+                components={components || []}
+                isMouseClicked={isMouseClicked}
+                onOpenComponentToolbar={(e: any) => {
+                  setInsertComponentToolBar(e.currentTarget);
+                  setToolBarItem(line);
+                }}
+                onMoveItem={(fromIndex: number, toIndex: number) => {
+                  let updatedItems = [...lines];
+                  const [removed] = updatedItems.splice(fromIndex, 1);
+                  updatedItems.splice(toIndex, 0, removed);
+                  updatedItems = updatedItems.map(
+                    (line: LineItemProps, index: number) => {
+                      return {
+                        ...line,
+                        order: index,
+                      };
+                    }
+                  );
+                  setLines(updatedItems);
+                }}
+                onTextUpdateEnter={onTextUpdateEnter}
+                onTextUpdate={onTextUpdate}
+                onFocusUp={onFocusUp}
+                onFocusDown={onFocusDown}
+                onRemoveLine={onRemoveLine}
+                onToggleEdit={onToggleEdit}
+              />
+            );
+          })}
+        </DndProvider>
         {lines.length === 0 && (
-          <div className="editor-item">
+          <div
+            className={`editor-item ${lineItemClassName || ""}`}
+            style={lineItemStyle || {}}
+          >
             <ContentEditable
               _id=""
               value=""

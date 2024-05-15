@@ -1,12 +1,15 @@
 import Editor from "../src/editor/Editor";
 import "./App.css";
 import InsertLinkIcon from "@mui/icons-material/InsertLink";
-import Image from "./Image";
+import ImageComponent from "./ImageComponent";
 import React, { useState } from "react";
-import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
+import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
 import PhotoSizeSelectActualIcon from "@mui/icons-material/PhotoSizeSelectActual";
 import AnchorLink from "./AnchorLink";
 import VideoComponent from "./VideoComponent";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
+import DividerComponent from "./DividerComponent";
 function App() {
   const [lines, setLines]: any = useState([]);
   const [anchorEl, setAnchorEl]: any = useState(null);
@@ -20,6 +23,21 @@ function App() {
       className: "red-text",
       label: "Red",
       tooltip: "Turn text red",
+    },
+    {
+      className: "heading-1",
+      label: "H1",
+      tooltip: "Heading 1",
+    },
+    {
+      className: "heading-2",
+      label: "H2",
+      tooltip: "Heading 2",
+    },
+    {
+      className: "heading-3",
+      label: "H3",
+      tooltip: "Heading 3",
     },
     {
       className: "click-handler",
@@ -53,6 +71,7 @@ function App() {
               {
                 key: "imageUrl",
                 value,
+                isEditing: false,
               },
             ];
           },
@@ -81,7 +100,7 @@ function App() {
           return [...newLines];
         });
       },
-      component: Image,
+      component: ImageComponent,
     },
     {
       label: "Insert Video",
@@ -101,6 +120,7 @@ function App() {
               {
                 key: "videoUrl",
                 value,
+                isEditing: false,
               },
             ];
           },
@@ -131,11 +151,23 @@ function App() {
       },
       component: VideoComponent,
     },
+    {
+      label: "Insert Divider",
+      type: "Divider",
+      elemProps: {},
+      icon: <HorizontalRuleIcon />,
+      elemHandlers: [],
+      onModifyItem: (line: any) => {
+        setLines((prev: any) => {
+          const newLines = [...prev];
+          newLines[line.order] = line;
+          return [...newLines];
+        });
+      },
+      component: DividerComponent,
+    },
   ];
 
-  React.useEffect(()=>{
-    console.log(lines);
-  }, [lines]);
   return (
     <>
       <AnchorLink
@@ -159,9 +191,31 @@ function App() {
       />
       <Editor
         lines={lines}
+        containerStyle={{
+          width: "90vw",
+          marginLeft: "5vw",
+          height: "60vh",
+          overflowY: "auto",
+          border: "1px solid black",
+        }}
+        lineItemStyle={{
+          padding: "0px",
+        }}
+        lineItemIcon={
+          <>
+            <DragIndicatorIcon />
+          </>
+        }
+        lineItemClassName="line-item-none"
+        textFormatToolBarStyle={{
+          borderRadius: "10px",
+        }}
         setLines={setLines}
         textFormats={textFormats}
         components={components}
+        componentPopoverStyle={{
+          background: "white",
+        }}
       />
     </>
   );

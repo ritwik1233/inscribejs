@@ -5,6 +5,7 @@ const ComponentPopover: React.FC<ComponentPopoverProps> = ({
   isOpen,
   anchorEl,
   onClose,
+  componentPopoverStyle = {},
   components,
   onSelectFormat,
   toolBarItem,
@@ -17,7 +18,6 @@ const ComponentPopover: React.FC<ComponentPopoverProps> = ({
         onClose();
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -34,7 +34,7 @@ const ComponentPopover: React.FC<ComponentPopoverProps> = ({
     <div
       className="component-popover"
       ref={popoverRef}
-      style={{ top: `${top}px`, left: `${left}px` }}
+      style={{ top: `${top}px`, left: `${left}px`, ...componentPopoverStyle }}
     >
       <ul className="component-list">
         {components.map((component: ComponentProps, index: number) => (

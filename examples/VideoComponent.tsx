@@ -85,7 +85,7 @@ const VideoComponent: React.FC<VideoComponentProps> = (props) => {
                 )}
                 {videoUrl.length > 0 && (
                   <Grid item xs={12}>
-                    <ReactPlayer width={width} height={height} url={videoUrl} />
+                    <ReactPlayer width={width} height={height} url={videoUrl} controls />
                   </Grid>
                 )}
               </Grid>
