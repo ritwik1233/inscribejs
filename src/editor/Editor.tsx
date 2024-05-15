@@ -35,6 +35,7 @@ const Editor: React.FC<EditorProps> = (props) => {
     containerStyle,
     lineItemClassName,
     lineItemStyle,
+    onGenerateId,
     components = [],
     textFormatToolBarStyle = {},
     componentPopoverStyle = {},
@@ -485,7 +486,7 @@ const Editor: React.FC<EditorProps> = (props) => {
     }
     const elemProps = component.elemProps || {};
     const newLine = {
-      _id: uniqid(),
+      _id: onGenerateId ? onGenerateId() : uniqid(),
       value: "",
       order: newOrder,
       isEditing: false,
@@ -594,7 +595,7 @@ const Editor: React.FC<EditorProps> = (props) => {
         newLines[order].value = val;
         newLines[order].isEditing = false;
         newLines.splice(order + 1, 0, {
-          _id: uniqid(),
+          _id: onGenerateId ? onGenerateId() : uniqid(),
           value: "",
           type: "text",
           order: order + 1,
@@ -707,14 +708,14 @@ const Editor: React.FC<EditorProps> = (props) => {
                 setLines((prev: LineItemProps[]) => {
                   let newLines: LineItemProps[] = [...prev];
                   newLines.push({
-                    _id: uniqid(),
+                    _id: onGenerateId ? onGenerateId() : uniqid(),
                     value: val,
                     type: "text",
                     order: 0,
                     isEditing: false,
                   });
                   newLines.push({
-                    _id: uniqid(),
+                    _id: onGenerateId ? onGenerateId() : uniqid(),
                     type: "text",
                     value: "",
                     order: 1,
@@ -728,14 +729,14 @@ const Editor: React.FC<EditorProps> = (props) => {
                   setLines((prev: LineItemProps[]) => {
                     let newLines: LineItemProps[] = [...prev];
                     newLines.push({
-                      _id: uniqid(),
+                      _id: onGenerateId ? onGenerateId() : uniqid(),
                       type: "text",
                       value: val,
                       order: 0,
                       isEditing: false,
                     });
                     newLines.push({
-                      _id: uniqid(),
+                      _id: onGenerateId ? onGenerateId() : uniqid(),
                       type: "text",
                       value: "",
                       order: 1,

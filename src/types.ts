@@ -48,6 +48,7 @@ export interface EditorProps {
     lines: LineItemProps[];
     setLines: React.Dispatch<React.SetStateAction<LineItemProps[]>>;
     textFormats?: TextItem[];
+    onGenerateId?: () => string;
     lineItemIconStyle?: React.CSSProperties;
     containerStyle?: React.CSSProperties;
     containerClassName?: string;

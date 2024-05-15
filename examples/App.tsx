@@ -10,6 +10,7 @@ import VideoComponent from "./VideoComponent";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import DividerComponent from "./DividerComponent";
+import uniqid from "uniqid";
 function App() {
   const [lines, setLines]: any = useState([]);
   const [anchorEl, setAnchorEl]: any = useState(null);
@@ -206,6 +207,9 @@ function App() {
             <DragIndicatorIcon />
           </>
         }
+        onGenerateId={()=>{
+          return `text-${uniqid()}`;
+        }}
         lineItemClassName="line-item-none"
         textFormatToolBarStyle={{
           borderRadius: "10px",
