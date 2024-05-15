@@ -17,6 +17,7 @@ const ContentEditable: React.FC<ContentEditableProps> = (props) => {
   const {
     _id,
     value,
+    previewMode,
     textFormats,
     order,
     isEditing,
@@ -72,77 +73,79 @@ const ContentEditable: React.FC<ContentEditableProps> = (props) => {
   }, [isEditing]);
 
   return (
-      <div
-        ref={textRef}
-        id={`lineItem-${_id}`}
-        data-order={`lineItem-${order}`}
-        contentEditable={isMouseClicked ? "false" : "true"}
-        suppressContentEditableWarning={true}
-        placeholder="type @ for command"
-        onClick={(e) => {
-          isEditorClicked.current = !isEditorClicked.current;
-          if (_id.length > 0 && onToggleEdit && !isEditing) {
-            onToggleEdit(order);
-            return;
-          }
-        }}
-        className="editor-item-editable-text"
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            const val = textRef.current?.innerHTML || "";
-            if (_id.length === 0) {
-              onTextUpdateEnter(val);
-              return;
-            }
-          }
-          if (_id.length) {
-            const val = textRef.current?.innerHTML || "";
-            if (e.key === "Enter") {
-              e.preventDefault();
-              e.stopPropagation();
-              onTextUpdateEnter(val, order);
-              return;
-            }
-            if (e.key === "ArrowUp") {
-              e.preventDefault();
-              e.stopPropagation();
-              if (onFocusUp) {
-                onFocusUp(val, order);
-                return;
-              }
-            }
-            if (e.key === "ArrowDown") {
-              e.preventDefault();
-              e.stopPropagation();
-              if (onFocusDown) {
-                onFocusDown(val, order);
-                return;
-              }
-            }
-            if (e.key === "Backspace" && val.length === 0 && onRemoveLine) {
-              e.preventDefault();
-              e.stopPropagation();
-              onRemoveLine(order);
-              return;
-            }
-          }
-        }}
-        onBlur={(e) => {
+    <div
+      ref={textRef}
+      id={`lineItem-${_id}`}
+      data-order={`lineItem-${order}`}
+      contentEditable={
+        previewMode ? "false" : isMouseClicked ? "false" : "true"
+      }
+      suppressContentEditableWarning={true}
+      placeholder="type @ for command"
+      onClick={(e) => {
+        isEditorClicked.current = !isEditorClicked.current;
+        if (_id.length > 0 && onToggleEdit && !isEditing) {
+          onToggleEdit(order);
+          return;
+        }
+      }}
+      className="editor-item-editable-text"
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
           const val = textRef.current?.innerHTML || "";
           if (_id.length === 0) {
-            e.preventDefault();
-            onTextUpdate(val);
+            onTextUpdateEnter(val);
             return;
           }
-          if (_id.length && isEditing) {
+        }
+        if (_id?.length) {
+          const val = textRef.current?.innerHTML || "";
+          if (e.key === "Enter") {
             e.preventDefault();
-            onTextUpdate(val, order);
+            e.stopPropagation();
+            onTextUpdateEnter(val, order);
             return;
           }
-        }}
-        dangerouslySetInnerHTML={{ __html: value }}
-      />
+          if (e.key === "ArrowUp") {
+            e.preventDefault();
+            e.stopPropagation();
+            if (onFocusUp) {
+              onFocusUp(val, order);
+              return;
+            }
+          }
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            e.stopPropagation();
+            if (onFocusDown) {
+              onFocusDown(val, order);
+              return;
+            }
+          }
+          if (e.key === "Backspace" && val.length === 0 && onRemoveLine) {
+            e.preventDefault();
+            e.stopPropagation();
+            onRemoveLine(order);
+            return;
+          }
+        }
+      }}
+      onBlur={(e) => {
+        const val = textRef.current?.innerHTML || "";
+        if (_id.length === 0) {
+          e.preventDefault();
+          onTextUpdate(val);
+          return;
+        }
+        if (_id.length && isEditing) {
+          e.preventDefault();
+          onTextUpdate(val, order);
+          return;
+        }
+      }}
+      dangerouslySetInnerHTML={{ __html: value }}
+    />
   );
 };
 export default ContentEditable;

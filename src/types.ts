@@ -46,6 +46,7 @@ export interface LineItemProps {
 }
 export interface EditorProps {
     lines: LineItemProps[];
+    previewMode?: boolean;
     setLines: React.Dispatch<React.SetStateAction<LineItemProps[]>>;
     textFormats?: TextItem[];
     onGenerateId?: () => string;
@@ -90,6 +91,7 @@ export interface ComponentPopoverProps {
 }
 export interface LineItemComponentProps {
     line: LineItemProps;
+    previewMode?: boolean;
     lineItemIconStyle?: React.CSSProperties;
     lineItemIcon? : React.ReactNode;
     isMouseClicked: boolean;
@@ -110,6 +112,7 @@ export interface LineItemComponentProps {
 export interface ContentEditableProps {
     _id: string;
     value: string;
+    previewMode?: boolean;
     order: number;
     isEditing: boolean;
     textFormats?: TextItem[];

@@ -14,6 +14,7 @@ import uniqid from "uniqid";
 function App() {
   const [lines, setLines]: any = useState([]);
   const [anchorEl, setAnchorEl]: any = useState(null);
+  const [previewMode, setPreviewMode] = useState(false);
   const textFormats = [
     {
       className: "blue-text",
@@ -190,8 +191,16 @@ function App() {
           });
         }}
       />
+      <button
+        onClick={() => {
+          setPreviewMode(!previewMode);
+        }}
+      >
+        previewmo
+      </button>
       <Editor
         lines={lines}
+        previewMode={previewMode}
         containerStyle={{
           width: "90vw",
           marginLeft: "5vw",
@@ -207,7 +216,7 @@ function App() {
             <DragIndicatorIcon />
           </>
         }
-        onGenerateId={()=>{
+        onGenerateId={() => {
           return `text-${uniqid()}`;
         }}
         lineItemClassName="line-item-none"

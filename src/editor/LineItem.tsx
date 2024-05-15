@@ -8,6 +8,7 @@ import { useDrag, useDrop } from "react-dnd";
 const LineItem: React.FC<LineItemComponentProps> = (props) => {
   const {
     line,
+    previewMode,
     components,
     isMouseClicked,
     lineItemIcon,
@@ -92,6 +93,7 @@ const LineItem: React.FC<LineItemComponentProps> = (props) => {
           _id={line._id}
           value={line.value}
           order={line.order}
+          previewMode={previewMode}
           textFormats={textFormats}
           isEditing={line.isEditing}
           isMouseClicked={isMouseClicked}

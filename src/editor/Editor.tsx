@@ -28,6 +28,7 @@ const Editor: React.FC<EditorProps> = (props) => {
   const {
     lines,
     setLines,
+    previewMode,
     lineItemIcon,
     textFormatToolBarClassName,
     textFormats,
@@ -390,11 +391,14 @@ const Editor: React.FC<EditorProps> = (props) => {
         controlA.current = false;
       }
     };
-    document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("keyup", onKeyUp);
-    document.addEventListener("selectionchange", handleSelectionChange);
-    document.addEventListener("mouseup", onMouseUp);
-    document.addEventListener("mousemove", onMouseMove);
+    if (!previewMode) {
+      document.addEventListener("keydown", onKeyDown);
+      document.addEventListener("keyup", onKeyUp);
+      document.addEventListener("selectionchange", handleSelectionChange);
+      document.addEventListener("mouseup", onMouseUp);
+      document.addEventListener("mousemove", onMouseMove);
+    }
+
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
@@ -402,7 +406,7 @@ const Editor: React.FC<EditorProps> = (props) => {
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousemove", onMouseMove);
     };
-  }, [lines]);
+  }, [lines, previewMode]);
 
   const selectedLine: LineItemProps | undefined = lines.find(
     (line: LineItemProps) => line.isEditing
@@ -420,7 +424,7 @@ const Editor: React.FC<EditorProps> = (props) => {
         onTextUpdateEnter("", selectedLine?.order || -1);
       }
     };
-    if (selectedLine) {
+    if (selectedLine && !previewMode) {
       if (selectedLine.type !== "text") {
         document.addEventListener("keydown", onKeyDown);
       } else {
@@ -430,7 +434,7 @@ const Editor: React.FC<EditorProps> = (props) => {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [selectedLine]);
+  }, [selectedLine, previewMode]);
 
   const onAddFormat = (className: string, onClickHandler?: ClickHanderType) => {
     const updatedLines: {
@@ -617,41 +621,45 @@ const Editor: React.FC<EditorProps> = (props) => {
       className={containerClassName ? containerClassName : `editor-container`}
       style={containerStyle || {}}
     >
-      <ComponentPopover
-        isOpen={!!insertComponentToolBar}
-        anchorEl={insertComponentToolBar}
-        componentPopoverStyle={componentPopoverStyle}
-        onClose={() => {
-          setInsertComponentToolBar(null);
-          setToolBarItem({});
-        }}
-        components={components || []}
-        onSelectFormat={onSelectFormat}
-        toolBarItem={toolBarItem}
-      />
-      <TextFormatToolBar
-        open={showTooltip}
-        textFormatToolBarStyle={textFormatToolBarStyle}
-        textFormatToolBarClassName={textFormatToolBarClassName}
-        anchorPosition={{
-          top: tooltipPosition.y,
-          left: tooltipPosition.x,
-        }}
-        textFormats={textFormats || []}
-        onAddFormat={onAddFormat}
-        onClose={(e: any) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setShowTooltip(false);
-          setTooltipPosition({
-            x: 0,
-            y: 0,
-          });
-          rangeArray.current = [];
-          const selection = window.getSelection();
-          selection?.removeAllRanges();
-        }}
-      />
+      {!previewMode && (
+        <>
+          <ComponentPopover
+            isOpen={!!insertComponentToolBar}
+            anchorEl={insertComponentToolBar}
+            componentPopoverStyle={componentPopoverStyle}
+            onClose={() => {
+              setInsertComponentToolBar(null);
+              setToolBarItem({});
+            }}
+            components={components || []}
+            onSelectFormat={onSelectFormat}
+            toolBarItem={toolBarItem}
+          />
+          <TextFormatToolBar
+            open={showTooltip}
+            textFormatToolBarStyle={textFormatToolBarStyle}
+            textFormatToolBarClassName={textFormatToolBarClassName}
+            anchorPosition={{
+              top: tooltipPosition.y,
+              left: tooltipPosition.x,
+            }}
+            textFormats={textFormats || []}
+            onAddFormat={onAddFormat}
+            onClose={(e: any) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowTooltip(false);
+              setTooltipPosition({
+                x: 0,
+                y: 0,
+              });
+              rangeArray.current = [];
+              const selection = window.getSelection();
+              selection?.removeAllRanges();
+            }}
+          />
+        </>
+      )}
       <div className="editor-item-container">
         <DndProvider backend={HTML5Backend}>
           {lines.map((line: any) => {
@@ -659,6 +667,7 @@ const Editor: React.FC<EditorProps> = (props) => {
               <LineItem
                 key={line._id}
                 line={line}
+                previewMode={previewMode}
                 lineItemIcon={lineItemIcon}
                 lineItemClassName={lineItemClassName}
                 lineItemStyle={lineItemStyle}
@@ -671,18 +680,20 @@ const Editor: React.FC<EditorProps> = (props) => {
                   setToolBarItem(line);
                 }}
                 onMoveItem={(fromIndex: number, toIndex: number) => {
-                  let updatedItems = [...lines];
-                  const [removed] = updatedItems.splice(fromIndex, 1);
-                  updatedItems.splice(toIndex, 0, removed);
-                  updatedItems = updatedItems.map(
-                    (line: LineItemProps, index: number) => {
-                      return {
-                        ...line,
-                        order: index,
-                      };
-                    }
-                  );
-                  setLines(updatedItems);
+                  if (!previewMode) {
+                    let updatedItems = [...lines];
+                    const [removed] = updatedItems.splice(fromIndex, 1);
+                    updatedItems.splice(toIndex, 0, removed);
+                    updatedItems = updatedItems.map(
+                      (line: LineItemProps, index: number) => {
+                        return {
+                          ...line,
+                          order: index,
+                        };
+                      }
+                    );
+                    setLines(updatedItems);
+                  }
                 }}
                 onTextUpdateEnter={onTextUpdateEnter}
                 onTextUpdate={onTextUpdate}
@@ -703,8 +714,12 @@ const Editor: React.FC<EditorProps> = (props) => {
               _id=""
               value=""
               order={0}
+              previewMode={previewMode}
               isEditing={true}
               onTextUpdateEnter={(val: string) => {
+                if (previewMode) {
+                  return;
+                }
                 setLines((prev: LineItemProps[]) => {
                   let newLines: LineItemProps[] = [...prev];
                   newLines.push({
@@ -725,6 +740,9 @@ const Editor: React.FC<EditorProps> = (props) => {
                 });
               }}
               onTextUpdate={(val: string) => {
+                if (previewMode) {
+                  return;
+                }
                 if (val.length > 0) {
                   setLines((prev: LineItemProps[]) => {
                     let newLines: LineItemProps[] = [...prev];
